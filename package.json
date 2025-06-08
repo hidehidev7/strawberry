@@ -1,0 +1,13 @@
+{
+  "name": "strawberry",
+  "version": "1.0.0",
+  "main": "main.mjs",
+  "scripts": {
+    "test": "start",
+    "run": "node --env-file=.env main.mjs"
+  },
+  "type":"module",
+  "author": "",
+  "license": "MIT",
+  "description": ""
+}
