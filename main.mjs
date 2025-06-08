@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import express from "express";
 import discordjs from "discord.js";
 const { Client, Collection, Events, GatewayIntentBits, ActivityType, EmbedBuilder, REST, Routes } = discordjs;
 import CommandsRegister from "./regist-commands.mjs";

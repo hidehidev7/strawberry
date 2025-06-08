@@ -6,8 +6,11 @@
     "test": "start",
     "run": "node --env-file=.env main.mjs"
   },
-  "type":"module",
+  "type": "module",
   "author": "",
   "license": "MIT",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "discord.js": "^14.14.1"
+  }
 }
