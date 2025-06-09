@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from 'discord.js';
-import { getConfigJsonData, setConfigJsonData, getGuildIndex } from "/app/config_json_handler.mjs"
-import editReply from "/app/editReply.mjs";
+import { getConfigJsonData, setConfigJsonData, getGuildIndex } from "#app/config_json_handler.mjs"
+import editReply from "#app/editReply.mjs";
 
 export const data = new SlashCommandBuilder()
     .setName('register_this_guild')

@@ -3,8 +3,8 @@ import fs from 'fs';
 import path from 'path';
 import util from 'util';
 
-import { getDataOfGuild } from '/app/config_json_handler.mjs';
-import editReply from "/app/editReply.mjs";
+import { getDataOfGuild } from '#app/config_json_handler.mjs';
+import editReply from "#app/editReply.mjs";
 
 export const data = new SlashCommandBuilder()
     .setName('view_configuration_permission')

@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import util from 'util';
 
-import { getDataOfGuild } from '/app/config_json_handler.mjs';
+import { getDataOfGuild } from '#app/config_json_handler.mjs';
 
 export default async function (member) {
     if (!member) {

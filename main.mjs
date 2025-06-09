@@ -1,10 +1,9 @@
 import fs from "fs";
 import path from "path";
+import CommandsRegister from "#app/regist-commands.mjs";
 import discordjs from "discord.js";
-const { Client, Collection, Events, GatewayIntentBits, ActivityType, EmbedBuilder, REST, Routes } = discordjs;
-import CommandsRegister from "./regist-commands.mjs";
 
-
+const { Client, Collection, GatewayIntentBits } = discordjs;
 
 const client = new Client({
     intents: [
@@ -24,7 +23,7 @@ for (const folder of commandFolders) {
     const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith(".mjs"));
 
     for (const file of commandFiles) {
-        const filePath = path.join(commandsPath, file);
+        const filePath = "file://" + path.join(commandsPath, file);
         import(filePath).then((module) => {
             client.commands.set(module.data.name, module);
         });
@@ -37,7 +36,8 @@ const handlersPath = path.join(process.cwd(), "handlers");
 const handlerFiles = fs.readdirSync(handlersPath).filter((file) => file.endsWith(".mjs"));
 
 for (const file of handlerFiles) {
-    const filePath = path.join(handlersPath, file);
+    const filePath = "file://" + path.join(handlersPath, file);
+    console.log(filePath);
     import(filePath).then((module) => {
         handlers.set(file.slice(0, -4), module);
     });

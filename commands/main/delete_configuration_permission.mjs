@@ -3,9 +3,9 @@ import fs from "fs";
 import path from "path";
 import util from "util";
 
-import { getDataOfGuild, setDataOfGuild } from "/app/config_json_handler.mjs";
-import checkPermission from "/app/check_permission.mjs";
-import editReply from "/app/editReply.mjs";
+import { getDataOfGuild, setDataOfGuild } from "#app/config_json_handler.mjs";
+import checkPermission from "#app/check_permission.mjs";
+import editReply from "#app/editReply.mjs";
 
 export const data = new SlashCommandBuilder()
     .setName("delete_configuration_permission")

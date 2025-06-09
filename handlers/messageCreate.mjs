@@ -3,7 +3,7 @@ import { SlashCommandBuilder } from "discord.js";
 import fs from "fs";
 import path from "path";
 
-import { getDataOfGuild } from "/app/config_json_handler.mjs";
+import { getDataOfGuild } from "#app/config_json_handler.mjs";
 
 export default async (message) => {
 

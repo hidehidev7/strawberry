@@ -14,7 +14,7 @@ export default async (options) => {
         const commandsPath = path.join(foldersPath, folder);
         const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.mjs'));
         for (const file of commandFiles) {
-            const filePath = path.join(commandsPath, file);
+            const filePath = "file://" + path.join(commandsPath, file);
             await import(filePath).then(module => {
                 commands.push(module.data.toJSON());
             });
