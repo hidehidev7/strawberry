@@ -53,7 +53,8 @@ export const getDataOfGuild = async function (guildId) {
         return;
     }
     const guildData = configJsonData.data_of_guilds[guildIndex];
-    return guildData;
+    const copyData = JSON.parse(JSON.stringify(guildData));
+    return copyData;
 }
 
 //param guildId <String> ギルドのID
@@ -68,7 +69,7 @@ export const setDataOfGuild = async function (guildId, guildData) {
         return;
     }
 
-    global.data.configJsonData.data_of_guilds[guildIndex] = guildData;
+    global.data.configJsonData.data_of_guilds[guildIndex] = JSON.parse(JSON.stringify(guildData));
 
     return true;
 }
