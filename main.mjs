@@ -2,6 +2,10 @@ import fs from "fs";
 import path from "path";
 import CommandsRegister from "#app/regist-commands.mjs";
 import discordjs from "discord.js";
+import { initConfigJsonData } from "#app/config_json_handler.mjs";
+
+global.data = {};
+initConfigJsonData();
 
 const { Client, Collection, GatewayIntentBits } = discordjs;
 

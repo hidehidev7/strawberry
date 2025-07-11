@@ -9,17 +9,30 @@ const getConfigJsonPath = function () {
     return path.join(process.cwd(), "config.json");
 }
 
-export const getConfigJsonData = async function () {
+const configJsonDataInitializedCheck = function () {
+    if (!global.data.configJsonData) throw "data.configJsonData is not initialized";
+}
+
+export const initConfigJsonData = async function () {
     const configJsonPath = getConfigJsonPath();
-    const configJsonFileReturn = await readFile(configJsonPath).catch(e => { throw e; });
+    const configJsonFileReturn = await readFile(configJsonPath);
     const configJsonData = JSON.parse(configJsonFileReturn);
-    return configJsonData;
+    global.data.configJsonData = configJsonData;
+
+    setInterval(function () {
+        const configJsonFileString = JSON.stringify(global.data.configJsonData);
+        writeFile(configJsonPath, configJsonFileString).catch(e => { throw e });
+    }, 1000);
+}
+
+export const getConfigJsonData = async function () {
+    configJsonDataInitializedCheck();
+    return global.data.configJsonData;
 }
 
 export const setConfigJsonData = async function (configJsonData) {
-    const configJsonPath = getConfigJsonPath();
-    const configJsonFileReturn = JSON.stringify(configJsonData);
-    const writeFileCheck = await writeFile(configJsonPath, configJsonFileReturn).catch(e => { throw e; });
+    configJsonDataInitializedCheck();
+    global.data.configJsonData = configJsonData;
     return true;
 }
 
@@ -30,7 +43,9 @@ export const getGuildIndex = function (data_of_guilds, guildId) {
 //param guildId <String> ギルドのID
 //return guildData <object> | <undefined> ギルド情報を格納したオブジェクト。登録されていない場合、undefinedを返す。
 export const getDataOfGuild = async function (guildId) {
-    const configJsonData = await getConfigJsonData().catch(e => { console.log(e); });
+    configJsonDataInitializedCheck();
+
+    const configJsonData = global.data.configJsonData;
     if (!configJsonData) return;
 
     const guildIndex = getGuildIndex(configJsonData.data_of_guilds, guildId);
@@ -46,15 +61,14 @@ export const getDataOfGuild = async function (guildId) {
 //return guildData <object> | <undefined> ギルド情報を格納したオブジェクト。登録されていない場合、undefinedを返す。
 export const setDataOfGuild = async function (guildId, guildData) {
 
-    const configJsonData = await getConfigJsonData().catch(e => { console.log(e); });
-    if (!configJsonData) return;
+    configJsonDataInitializedCheck();
 
-    const guildIndex = getGuildIndex(configJsonData.data_of_guilds, guildId);
+    const guildIndex = getGuildIndex(global.data.configJsonData.data_of_guilds, guildId);
     if (guildIndex === -1) {
         return;
     }
 
-    const wConfigJsonData = Object.assign({}, configJsonData);
-    wConfigJsonData.data_of_guilds[guildIndex] = guildData;
-    return await setConfigJsonData(wConfigJsonData).catch(e => { console.log(e); });
+    global.data.configJsonData.data_of_guilds[guildIndex] = guildData;
+
+    return true;
 }
