@@ -77,7 +77,7 @@ export async function execute(interaction) {
                 });
                 const logChannel = await i.guild.channels.fetch(dataOfGuild.settings.log_channel);
                 if(dataOfGuild.settings.log_channel && logChannel) {
-                    await logChannel.send(`Squad Button Log: ${userMention(i.user.id)} clicked button of ${firstMessage.url}`);
+                    await logChannel.send(`Squad Button Log: ${userMention(i.user.id)} clicked button ${firstMessage.id} ${firstMessage.url}`);
                 }
             }
         });
