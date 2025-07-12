@@ -9,6 +9,8 @@ export default async function (interaction, replyCode) {
                 return "ごめんなさい、エラーが発生したみたいです。詳しいことは開発者に聞いて！";
             case "already_set":
                 return "あれ、その内容はもう設定されているみたいです";
+            case "not_allowed_here":
+                return "このコマンドはここでは使えません！";
             default:
                 return "えーっと……";
         }
