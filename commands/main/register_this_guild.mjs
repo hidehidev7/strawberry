@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from 'discord.js';
-import { getConfigJsonData, setConfigJsonData, getGuildIndex } from "#app/config_json_handler.mjs"
+import { getConfigJsonData, setConfigJsonData, getGuildIndex, getDefaultGuildData } from "#app/config_json_handler.mjs"
 import editReply from "#app/editReply.mjs";
 
 export const data = new SlashCommandBuilder()
@@ -23,7 +23,7 @@ export const execute = async function (interaction) {
     }
 
     const wConfigJsonData = Object.assign({}, configJsonData);
-    const guildData = { "guild_id": guild.id, "is_bot_activated": false, "configuration_permission_roles": [] };
+    const guildData = getDefaultGuildData(guild.id);
     wConfigJsonData.data_of_guilds.push(guildData);
     const check = await setConfigJsonData(wConfigJsonData).catch(e => { console.log(e); return "e"; });
     if (check === "e") {

@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, MessageFlags, SlashCommandBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, hyperlink, MessageFlags, SlashCommandBuilder, userMention } from "discord.js";
 import editReply from "#app/editReply.mjs";
 import { getDataOfGuild } from "#app/config_json_handler.mjs";
 
@@ -32,14 +32,16 @@ export const data = new SlashCommandBuilder()
     );
 
 export async function execute(interaction) {
-
-    const dataOfGuild = await getDataOfGuild(interaction.guild.id);
-    if(!dataOfGuild) {
-        await editReply(interaction, "unregistered_guild");
-        return;
-    }
-
     try {
+        const firstMessageResponse = await interaction.deferReply({ withResponse: true });
+        const firstMessage = firstMessageResponse.resource.message;
+
+        const dataOfGuild = await getDataOfGuild(interaction.guild.id);
+        if (!dataOfGuild) {
+            await editReply(interaction, "unregistered_guild");
+            return;
+        }
+
         const codeString = interaction.options.getString('code');
 
         const blacklistUsers = [];
@@ -57,14 +59,13 @@ export async function execute(interaction) {
         const row = new ActionRowBuilder()
             .addComponents(button);
 
-        const response = await interaction.reply({
-            components: [row],
-            withResponse: true
+        await interaction.editReply({
+            components: [row]
         });
 
-        const collector = response.resource.message.createMessageComponentCollector({ componentType: ComponentType.Button, time: 3_600_000 });
+        const collector = firstMessage.createMessageComponentCollector({ componentType: ComponentType.Button, time: 3_600_000 });
         collector.on("collect", async i => {
-            if ( blacklistUsers.includes(i.user) ) {
+            if (blacklistUsers.includes(i.user)) {
                 await i.reply({
                     content: "募集者によって指定されているので、あなたはこのスクアドコードを閲覧することができません！ :P",
                     flags: MessageFlags.Ephemeral
@@ -74,6 +75,10 @@ export async function execute(interaction) {
                     content: `スクアドコード： ${codeString}`,
                     flags: MessageFlags.Ephemeral
                 });
+                const logChannel = await i.guild.channels.fetch(dataOfGuild.settings.log_channel);
+                if(dataOfGuild.settings.log_channel && logChannel) {
+                    await logChannel.send(`Squad Button Log: ${userMention(i.user.id)} clicked button of ${firstMessage.url}`);
+                }
             }
         });
 
