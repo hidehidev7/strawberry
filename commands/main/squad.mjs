@@ -41,6 +41,15 @@ export async function execute(interaction) {
             await editReply(interaction, "unregistered_guild");
             return;
         }
+        {
+            const squadAllowedChannelStr = dataOfGuild.settings.squad_allowed_channel_s ?? "";
+            const squadAllowedChannelList = squadAllowedChannelStr.split(" ");
+            console.log(squadAllowedChannelList);
+            if(!squadAllowedChannelList.includes(firstMessage.channel.name)) {
+                await editReply(interaction, "not_allowed_here");
+                return;
+            }
+        }
 
         const codeString = interaction.options.getString('code');
 

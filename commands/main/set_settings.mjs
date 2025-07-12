@@ -20,6 +20,9 @@ export const data = (() => {
             if (type === "channel") {
                 s = s.addChannelOption(optionFunc);
             }
+            if (type === "string") {
+                s = s.addStringOption(optionFunc);
+            }
             return s;
         })
     })
@@ -59,6 +62,9 @@ export async function execute(interaction) {
             if (settingType === "channel") {
                 const raw = interaction.options.getChannel("value");
                 value = raw ? raw.id : undefined;
+            }
+            if (settingType === "string") {
+                value = interaction.options.getString("value") ?? undefined;
             }
             console.log(value);
             const newAssignData = { settings: {  } };

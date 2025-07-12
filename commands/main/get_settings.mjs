@@ -76,5 +76,8 @@ async function getValue(interaction, settingId, guildData) {
             value = "未指定";
         }
     }
+    if (settingType === "string") {
+        value = guildData.settings[settingId] ?? "未指定";
+    }
     return value;
 }
