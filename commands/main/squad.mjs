@@ -44,11 +44,13 @@ export async function execute(interaction) {
             const squadAllowedChannelStr = dataOfGuild.settings.squad_allowed_channel_s ?? "";
             const squadAllowedChannelList = squadAllowedChannelStr.split(" ");
             console.log(squadAllowedChannelList);
-            if(!squadAllowedChannelList.includes(replyMessage.channel.name)) {
+            if (!squadAllowedChannelList.includes(replyMessage.channel.name)) {
                 await editReply(interaction, "not_allowed_here");
                 return;
             }
         }
+
+        const logChannel = await interaction.guild.channels.fetch(dataOfGuild.settings.log_channel);
 
         const codeString = interaction.options.getString('code');
 
@@ -85,14 +87,19 @@ export async function execute(interaction) {
                     content: `スクアドコード： ${codeString}`,
                     flags: MessageFlags.Ephemeral
                 });
-                const logChannel = await i.guild.channels.fetch(dataOfGuild.settings.log_channel);
-                if(dataOfGuild.settings.log_channel && logChannel) {
-                    await logChannel.send(`Squad Button Log: ${userMention(i.user.id)} clicked button ${firstMessage.id} ${firstMessage.url}`);
+                if (dataOfGuild.settings.log_channel && logChannel) {
+                    await logChannel.send(`Squad Button Click: ${userMention(i.user.id)} clicked button ${firstMessage.id} ${firstMessage.url}`);
                 }
             }
         });
 
         await interaction.deleteReply();
+
+        //log
+        if (dataOfGuild.settings.log_channel && logChannel) {
+            await logChannel.send(`Squad Button Create: ${userMention(interaction.user.id)} created button ${firstMessage.id} ${firstMessage.url}
+`);
+        }
 
     } catch (e) {
         console.log(e);
