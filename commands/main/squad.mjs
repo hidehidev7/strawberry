@@ -33,8 +33,7 @@ export const data = new SlashCommandBuilder()
 
 export async function execute(interaction) {
     try {
-        const firstMessageResponse = await interaction.deferReply({ withResponse: true });
-        const firstMessage = firstMessageResponse.resource.message;
+        const replyMessage = (await interaction.deferReply({ withResponse: true })).resource.message;
 
         const dataOfGuild = await getDataOfGuild(interaction.guild.id);
         if (!dataOfGuild) {
@@ -45,7 +44,7 @@ export async function execute(interaction) {
             const squadAllowedChannelStr = dataOfGuild.settings.squad_allowed_channel_s ?? "";
             const squadAllowedChannelList = squadAllowedChannelStr.split(" ");
             console.log(squadAllowedChannelList);
-            if(!squadAllowedChannelList.includes(firstMessage.channel.name)) {
+            if(!squadAllowedChannelList.includes(replyMessage.channel.name)) {
                 await editReply(interaction, "not_allowed_here");
                 return;
             }
@@ -68,9 +67,11 @@ export async function execute(interaction) {
         const row = new ActionRowBuilder()
             .addComponents(button);
 
-        await interaction.editReply({
-            components: [row]
+        const firstMessage = await replyMessage.channel.send({
+            components: [row],
+            withResponse: true
         });
+        console.log(firstMessage);
 
         const collector = firstMessage.createMessageComponentCollector({ componentType: ComponentType.Button, time: 3_600_000 });
         collector.on("collect", async i => {
@@ -90,6 +91,8 @@ export async function execute(interaction) {
                 }
             }
         });
+
+        await interaction.deleteReply();
 
     } catch (e) {
         console.log(e);
