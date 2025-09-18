@@ -37,7 +37,7 @@ export const initConfigJsonData = async function () {
 
     setInterval(function () {
         const configJsonFileString = JSON.stringify(global.data.configJsonData);
-        writeFile(configJsonPath, configJsonFileString).catch(e => { throw e });
+        writeFile(configJsonPath, configJsonFileString);
     }, 10000);
 }
 
@@ -74,7 +74,7 @@ export const getDataOfGuild = async function (guildId) {
 }
 
 //param guildId <String> ギルドのID
-//      guildData <Object>　ギルドオブジェクト
+//      guildData <Object> ギルドオブジェクト
 //return guildData <object> | <undefined> ギルド情報を格納したオブジェクト。登録されていない場合、undefinedを返す。
 export const setDataOfGuild = async function (guildId, guildData) {
 
@@ -91,7 +91,7 @@ export const setDataOfGuild = async function (guildId, guildData) {
 }
 
 /**
- * const targetData = {
+* const targetData = {
     "john": 12,
     "michael": [1, 2, 3],
     "steve": {
@@ -137,7 +137,6 @@ console.log(targetData); //expected output: {
  * @param { object } data 
  */
 const assignData = function(targetData, data) {
-    console.log(data);
     for (let key in data) {
         const isTargetObject = typeof targetData[key] === "object" && !targetData.isArray && targetData[key] !== null;
         const isSourceObject =  typeof data[key] === "object" && !data.isArray && data[key] !== null;

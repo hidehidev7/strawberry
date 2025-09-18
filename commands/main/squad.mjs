@@ -102,7 +102,7 @@ export async function execute(interaction) {
         }
 
     } catch (e) {
-        console.log(e);
+        console.error(e);
         await editReply(interaction, "error_occured");
     }
 }
