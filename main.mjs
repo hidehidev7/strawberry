@@ -4,6 +4,9 @@ import CommandsRegister from "#app/regist-commands.mjs";
 import discordjs from "discord.js";
 import { initConfigJsonData } from "#app/config_json_handler.mjs";
 
+console.log("Strawberry Bot Start");
+console.log(Date());
+
 global.data = {};
 initConfigJsonData();
 
@@ -41,7 +44,6 @@ const handlerFiles = fs.readdirSync(handlersPath).filter((file) => file.endsWith
 
 for (const file of handlerFiles) {
     const filePath = "file://" + path.join(handlersPath, file);
-    console.log(filePath);
     import(filePath).then((module) => {
         handlers.set(file.slice(0, -4), module);
     });
