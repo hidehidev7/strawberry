@@ -38,7 +38,7 @@ export const initConfigJsonData = async function () {
     setInterval(function () {
         const configJsonFileString = JSON.stringify(global.data.configJsonData);
         writeFile(configJsonPath, configJsonFileString).catch(e => { throw e });
-    }, 1000);
+    }, 10000);
 }
 
 export const getConfigJsonData = async function () {
