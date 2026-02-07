@@ -3,8 +3,22 @@ import path from "path";
 import CommandsRegister from "#app/regist-commands.mjs";
 import { Client, Collection, GatewayIntentBits } from "discord.js";
 import { initConfigJsonData } from "#app/config_json_handler.mjs";
+import isOnline from "is-online";
+import { setTimeout as setTimeoutPromise } from "timers/promises";
 
 (async () => {
+    for (let trial = 0; trial < 10; trial++) {
+        if (await isOnline()) {
+            createBot();
+            break;
+        } else {
+            console.log("connection failed. retry after 5s.");
+            await setTimeoutPromise(5_000);
+        }
+    }
+})();
+
+async function createBot() {
     console.log("Strawberry Bot Start");
     console.log(Date());
 
@@ -63,4 +77,4 @@ import { initConfigJsonData } from "#app/config_json_handler.mjs";
 
     await CommandsRegister({ updateForAllGuild: true, });
     await client.login(process.env.TOKEN);
-})();
+};
