@@ -24,25 +24,21 @@ export default async (options) => {
     const rest = new REST().setToken(process.env.TOKEN);
 
     (async () => {
-        try {
-            console.log(`[INIT] ${commands.length}つのスラッシュコマンドを更新します。`);
+        console.log(`[INIT] ${commands.length}つのスラッシュコマンドを更新します。`);
 
-            if (updateForAllGuild) {
-                console.log(process.env.APPLICATION_ID);
-                const data = await rest.put(
-                    Routes.applicationCommands(process.env.APPLICATION_ID),
-                    { body: commands },
-                );
-            } else {
-                const data = await rest.put(
-                    Routes.applicationCommands(process.env.APPLICATION_ID, process.env.HIDE_GUILD_ID),
-                    { body: commands },
-                );
-            }
-
-            console.log(`[INIT] ${commands.length}つのスラッシュコマンドを更新しました。`);
-        } catch (error) {
-            console.error(error);
+        if (updateForAllGuild) {
+            console.log(process.env.APPLICATION_ID);
+            const data = await rest.put(
+                Routes.applicationCommands(process.env.APPLICATION_ID),
+                { body: commands },
+            );
+        } else {
+            const data = await rest.put(
+                Routes.applicationCommands(process.env.APPLICATION_ID, process.env.HIDE_GUILD_ID),
+                { body: commands },
+            );
         }
+
+        console.log(`[INIT] ${commands.length}つのスラッシュコマンドを更新しました。`);
     })();
 };
