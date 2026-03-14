@@ -84,13 +84,15 @@ async function createBot() {
 
 /** @param { Client } client */
 function launchPeriodicProcess(client) {
-    setInterval(() => { everyMinute(client) }, 60_000);
+    setTimeout(everyMinute, 5_000);
 
     const postFlorrServerInfoHandler = new PostFlorrServerInfoHandler();
 
-    function everyMinute() {
+    async function everyMinute() {
         console.log(`every minute (${new Date().getMinutes()})`);
 
-        postFlorrServerInfoHandler.do(client);
+        await postFlorrServerInfoHandler.do(client);
+
+        setTimeout(everyMinute, 60_000);
     }
 }
