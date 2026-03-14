@@ -5,6 +5,7 @@ import { Client, Collection, GatewayIntentBits } from "discord.js";
 import { initConfigJsonData } from "#app/config_json_handler.mjs";
 import isOnline from "is-online";
 import { setTimeout as setTimeoutPromise } from "timers/promises";
+import { PostFlorrServerInfoHandler } from "./periodic/post_florr_server_info.js";
 
 (async () => {
     for (let trial = 0; trial < 10; trial++) {
@@ -77,4 +78,19 @@ async function createBot() {
 
     await CommandsRegister({ updateForAllGuild: true, });
     await client.login(process.env.TOKEN);
+
+    launchPeriodicProcess(client);
 };
+
+/** @param { Client } client */
+function launchPeriodicProcess(client) {
+    setInterval(() => { everyMinute(client) }, 60_000);
+
+    const postFlorrServerInfoHandler = new PostFlorrServerInfoHandler();
+
+    function everyMinute() {
+        console.log(`every minute (${new Date().getMinutes()})`);
+
+        postFlorrServerInfoHandler.do(client);
+    }
+}
