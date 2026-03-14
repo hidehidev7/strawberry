@@ -77,12 +77,12 @@ export const initConfigJsonData = async function () {
     }, 5000);
 }
 
-export const getConfigJsonData = async function () {
+export const getConfigJsonData = function () {
     configJsonDataInitializedCheck();
     return global.data.configJsonData;
 }
 
-export const setConfigJsonData = async function (configJsonData) {
+export const setConfigJsonData = function (configJsonData) {
     configJsonDataInitializedCheck();
     global.data.configJsonData = configJsonData;
     return true;
@@ -94,7 +94,7 @@ export const getGuildIndex = function (data_of_guilds, guildId) {
 
 //param guildId <String> ギルドのID
 //return guildData <object> | <undefined> ギルド情報を格納したオブジェクト。登録されていない場合、undefinedを返す。
-export const getDataOfGuild = async function (guildId) {
+export const getDataOfGuild = function (guildId) {
     configJsonDataInitializedCheck();
 
     const configJsonData = global.data.configJsonData;
@@ -112,7 +112,7 @@ export const getDataOfGuild = async function (guildId) {
 //param guildId <String> ギルドのID
 //      guildData <Object> ギルドオブジェクト
 //return guildData <object> | <undefined> ギルド情報を格納したオブジェクト。登録されていない場合、undefinedを返す。
-export const setDataOfGuild = async function (guildId, guildData) {
+export const setDataOfGuild = function (guildId, guildData) {
 
     configJsonDataInitializedCheck();
 

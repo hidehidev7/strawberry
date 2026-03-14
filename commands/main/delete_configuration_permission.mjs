@@ -21,7 +21,7 @@ export async function execute(interaction) {
     const roleName = interaction.options.getString("role");
 
     const guildId = interaction.guild.id;
-    const guildData = await getDataOfGuild(guildId);
+    const guildData = getDataOfGuild(guildId);
     if (guildData) {
 
         const editedGuildData = Object.assign({}, guildData);
@@ -31,7 +31,7 @@ export async function execute(interaction) {
             return;
         }
         editedGuildData.configuration_permission_roles.splice(roleIndexInTheList, 1);
-        const setDataOfGuildCheck = await setDataOfGuild(guildId, editedGuildData);
+        const setDataOfGuildCheck = setDataOfGuild(guildId, editedGuildData);
         if (setDataOfGuildCheck) {
             await interaction.editReply(`ロール"${roleName}"をリストから削除しました！`);
         } else {

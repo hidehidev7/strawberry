@@ -21,12 +21,12 @@ export async function execute(interaction) {
     const roleName = interaction.options.getString("role");
 
     const guildId = interaction.guild.id;
-    const guildData = await getDataOfGuild(guildId);
+    const guildData = getDataOfGuild(guildId);
     if (guildData) {
 
         const editedGuildData = Object.assign({}, guildData);
         editedGuildData.configuration_permission_roles.push(roleName);
-        const setDataOfGuildCheck = await setDataOfGuild(guildId, editedGuildData);
+        const setDataOfGuildCheck = setDataOfGuild(guildId, editedGuildData);
         if (setDataOfGuildCheck) {
             await interaction.editReply(`ロール"${roleName}"をリストに追加しました！`);
         } else {

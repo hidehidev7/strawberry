@@ -10,7 +10,7 @@ export const data = new SlashCommandBuilder()
 export const execute = async function (interaction) {
     await interaction.deferReply();
     const guild = interaction.guild;
-    const configJsonData = await getConfigJsonData().catch(e => { console.log(e); });
+    const configJsonData = getConfigJsonData().catch(e => { console.log(e); });
     if (!configJsonData) {
         await editReply(interaction, "error_occured");
         return;
@@ -25,7 +25,7 @@ export const execute = async function (interaction) {
     const wConfigJsonData = Object.assign({}, configJsonData);
     const guildData = getDefaultGuildData(guild.id);
     wConfigJsonData.data_of_guilds.push(guildData);
-    const check = await setConfigJsonData(wConfigJsonData).catch(e => { console.log(e); return "e"; });
+    const check = setConfigJsonData(wConfigJsonData).catch(e => { console.log(e); return "e"; });
     if (check === "e") {
         await editReply(interaction, "error_occured");
     } else {

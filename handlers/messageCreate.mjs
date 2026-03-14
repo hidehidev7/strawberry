@@ -10,7 +10,7 @@ export default async (message) => {
     async function deleteSuperReportMessage() {
 
         const guildId = message.guildId;
-        const guildData = await getDataOfGuild(guildId);
+        const guildData = getDataOfGuild(guildId);
 
         if (!guildData) return;
         if (!guildData.is_bot_activated) return;

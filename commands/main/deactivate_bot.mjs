@@ -15,7 +15,7 @@ export async function execute(interaction) {
     await interaction.deferReply();
 
     const guildId = interaction.guild.id;
-    const guildData = await getDataOfGuild(guildId);
+    const guildData = getDataOfGuild(guildId);
     if (guildData) {
         const member = (() => {
             const memberCollection = interaction.guild.members.cache;
@@ -42,7 +42,7 @@ export async function execute(interaction) {
         }
         const editedGuildData = Object.assign({}, guildData);
         editedGuildData.is_bot_activated = false;
-        const setDataOfGuildCheck = await setDataOfGuild(guildId, editedGuildData);
+        const setDataOfGuildCheck = setDataOfGuild(guildId, editedGuildData);
         if (setDataOfGuildCheck) {
             await interaction.editReply("メッセージへの反応が無効化されました！");
         } else {

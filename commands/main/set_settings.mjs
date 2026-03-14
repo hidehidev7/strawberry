@@ -34,7 +34,7 @@ export async function execute(interaction) {
         await interaction.deferReply();
 
         const guildId = interaction.guild.id;
-        const guildData = await getDataOfGuild(guildId);
+        const guildData = getDataOfGuild(guildId);
         if (guildData) {
             const member = (() => {
                 const memberCollection = interaction.guild.members.cache;

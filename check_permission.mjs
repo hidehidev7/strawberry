@@ -9,7 +9,7 @@ export default async function (member) {
         throw ("error: the param 'member' is not vaild");
     }
     const guildId = member.guild.id;
-    const guildData = await getDataOfGuild(guildId);
+    const guildData = getDataOfGuild(guildId);
 
     if (!guildData) return false;
 

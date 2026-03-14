@@ -35,7 +35,7 @@ export async function execute(interaction) {
     try {
         const replyMessage = (await interaction.deferReply({ withResponse: true })).resource.message;
 
-        const dataOfGuild = await getDataOfGuild(interaction.guild.id);
+        const dataOfGuild = getDataOfGuild(interaction.guild.id);
         if (!dataOfGuild) {
             await editReply(interaction, "unregistered_guild");
             return;

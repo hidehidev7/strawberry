@@ -15,7 +15,7 @@ export async function execute(interaction) {
     await interaction.deferReply();
 
     const guildId = interaction.guild.id;
-    const guildData = await getDataOfGuild(guildId);
+    const guildData = getDataOfGuild(guildId);
     if (guildData) {
         if (guildData.is_bot_activated) {
             await interaction.editReply("メッセージへの反応は有効です");
