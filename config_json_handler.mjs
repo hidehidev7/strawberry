@@ -13,6 +13,16 @@ const getCopyConfigJsonPath = function () {
     return path.join(process.cwd(), "copy_config.json");
 }
 
+
+/**
+ *  @typedef {{
+ *      guild_id: string,
+ *      is_bot_activated: boolean,
+ *      configuration_permission_roles: string[],
+ *      settings: Object<string, any>
+ *  }} GuildData
+ * */
+
 const configJsonDataInitializedCheck = function () {
     if (!global.data.configJsonData) throw "data.configJsonData is not initialized";
 }
@@ -27,6 +37,7 @@ const initializeAllGuildData = function (configJsonData) {
     })
 }
 
+/** @return { GuildData } */
 export const getDefaultGuildData = function (guildId) {
     return { "guild_id": guildId, "is_bot_activated": false, "configuration_permission_roles": [], "settings": {} };
 }
@@ -94,6 +105,7 @@ export const getGuildIndex = function (data_of_guilds, guildId) {
 
 //param guildId <String> ギルドのID
 //return guildData <object> | <undefined> ギルド情報を格納したオブジェクト。登録されていない場合、undefinedを返す。
+/** @return { GuildData | undefined } */
 export const getDataOfGuild = function (guildId) {
     configJsonDataInitializedCheck();
 
@@ -111,7 +123,6 @@ export const getDataOfGuild = function (guildId) {
 
 //param guildId <String> ギルドのID
 //      guildData <Object> ギルドオブジェクト
-//return guildData <object> | <undefined> ギルド情報を格納したオブジェクト。登録されていない場合、undefinedを返す。
 export const setDataOfGuild = function (guildId, guildData) {
 
     configJsonDataInitializedCheck();
