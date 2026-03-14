@@ -1,4 +1,5 @@
 import { codeBlock, Client, EmbedBuilder } from "discord.js";
+import { getConfigJsonData } from "#app/config_json_handler.mjs";
 
 const ENDPOINTS = {
     garden: "florrio-map-0-green",
@@ -18,33 +19,39 @@ export class PostFlorrServerInfoHandler {
 
     /** @param { Client } client */
     async do(client) {
-        try {
-            //get server info
-            const servers = await this.fetchServers();
+        const configJsonData = getConfigJsonData();
+        for (const dataOfGuild of configJsonData.data_of_guilds) {
+            try {
+                const channelId = dataOfGuild.settings.force_server_id_channel;
+                if(!channelId) return;
+                const channel = await client.channels.fetch(channelId);
+                if(!channel) return;
 
-            //check if it's different from last data
-            if (this.lastServers && JSON.stringify(servers) !== JSON.stringify(this.lastServers)) {
-                return;
-            }
-            const filteredServers = servers;
-            this.lastServers = servers;
+                //get server info
+                const servers = await this.fetchServers();
 
-            //generate texts
-            const texts = {};
-            for (const region in filteredServers) {
-                texts[region] = {};
-                for (const key in servers[region]) {
-                    texts[region][key] = codeBlock('js', `cp6.forceServerID("${servers[region][key]}")`);
+                //check if it's different from last data
+                if (this.lastServers && JSON.stringify(servers) !== JSON.stringify(this.lastServers)) {
+                    return;
                 }
+                const filteredServers = servers;
+                this.lastServers = servers;
+
+                //generate texts
+                const texts = {};
+                for (const region in filteredServers) {
+                    texts[region] = {};
+                    for (const key in servers[region]) {
+                        texts[region][key] = codeBlock('js', `cp6.forceServerID("${servers[region][key]}")`);
+                    }
+                }
+
+                //post data
+                await this.post(channel, texts);
+            } catch (e) {
+                console.error(e);
+                console.error("failed to post florr server info");
             }
-
-            //post data
-            await this.post(client, texts);
-
-        } catch (e) {
-            console.error(e);
-            console.error("failed to post florr server info");
-            return;
         }
     }
 
@@ -68,9 +75,9 @@ export class PostFlorrServerInfoHandler {
         }
         return verified;
     }
-    async post(client, texts) {
-        const channelToPost = await client.channels.fetch("1217452055736881333");
-        if (!channelToPost) return;
+
+    /** @param { import("discord.js").Channel } channel */
+    async post(channel, texts) {
         const colors = { NA: "#cc0000", EU: "#0000cc", AS: "#00aa00" };
         const messageOptions = [];
         for (const region in texts) {
@@ -92,8 +99,8 @@ export class PostFlorrServerInfoHandler {
                     { name: 'Factory', inline: true, value: texts[region].factory },
                     { name: 'Pyramid', inline: true, value: texts[region].pyramid }
                 );
-            messageOptions.push({ embeds: [embed]});
+            messageOptions.push({ embeds: [embed] });
         }
-        await Promise.all(messageOptions.map(option => channelToPost.send(option)));
+        await Promise.all(messageOptions.map(option => channel.send(option)));
     }
 }
