@@ -13,10 +13,11 @@ export class PostFlorrServerInfoHandler {
 
             //check if it's different from last data
             if (this.lastServers && JSON.stringify(servers) === JSON.stringify(this.lastServers)) {
+                this.lastServers = servers;
                 return;
             }
-            const filteredServers = servers;
             this.lastServers = servers;
+            const filteredServers = servers;
 
             //generate texts
             const texts = {};
