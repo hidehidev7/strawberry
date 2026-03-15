@@ -19,40 +19,42 @@ export class PostFlorrServerInfoHandler {
 
     /** @param { Client } client */
     async do(client) {
-        const configJsonData = getConfigJsonRef();
-        for (const dataOfGuild of configJsonData.data_of_guilds) {
-            try {
-                const channelId = dataOfGuild.settings.force_server_id_channel;
-                if(!channelId) return;
-                const channel = await client.channels.fetch(channelId);
-                if(!channel) return;
+        try {
+            //get server info
+            const servers = await this.fetchServers();
 
-                //get server info
-                const servers = await this.fetchServers();
+            //check if it's different from last data
+            if (this.lastServers && JSON.stringify(servers) !== JSON.stringify(this.lastServers)) {
+                return;
+            }
+            const filteredServers = servers;
+            this.lastServers = servers;
 
-                //check if it's different from last data
-                if (this.lastServers && JSON.stringify(servers) !== JSON.stringify(this.lastServers)) {
-                    return;
+            //generate texts
+            const texts = {};
+            for (const region in filteredServers) {
+                texts[region] = {};
+                for (const key in servers[region]) {
+                    texts[region][key] = codeBlock('js', `cp6.forceServerID("${servers[region][key]}")`);
                 }
-                const filteredServers = servers;
-                this.lastServers = servers;
+            }
 
-                //generate texts
-                const texts = {};
-                for (const region in filteredServers) {
-                    texts[region] = {};
-                    for (const key in servers[region]) {
-                        texts[region][key] = codeBlock('js', `cp6.forceServerID("${servers[region][key]}")`);
+            //post data
+            const configJsonData = getConfigJsonRef();
+            for (const dataOfGuild of configJsonData.data_of_guilds) {
+                const channelId = dataOfGuild.settings.force_server_id_channel;
+                if (channelId) {
+                    const channel = await client.channels.fetch(channelId);
+                    if (channel) {
+                        await this.post(channel, texts);
                     }
                 }
-
-                //post data
-                await this.post(channel, texts);
-            } catch (e) {
-                console.error(e);
-                console.error("failed to post florr server info");
             }
+        } catch (e) {
+            console.error(e);
+            console.error("failed to post florr server info");
         }
+
     }
 
     async fetchServers() {
