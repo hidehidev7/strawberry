@@ -12,7 +12,7 @@ export class PostFlorrServerInfoHandler {
             const servers = await this.fetchServers();
 
             //check if it's different from last data
-            if (this.lastServers && JSON.stringify(servers) !== JSON.stringify(this.lastServers)) {
+            if (this.lastServers && JSON.stringify(servers) === JSON.stringify(this.lastServers)) {
                 return;
             }
             const filteredServers = servers;
