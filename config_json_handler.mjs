@@ -88,15 +88,9 @@ export const initConfigJsonData = async function () {
     }, 5000);
 }
 
-export const getConfigJsonData = function () {
+export const getConfigJsonRef = function () {
     configJsonDataInitializedCheck();
     return global.data.configJsonData;
-}
-
-export const setConfigJsonData = function (configJsonData) {
-    configJsonDataInitializedCheck();
-    global.data.configJsonData = configJsonData;
-    return true;
 }
 
 export const getGuildIndex = function (data_of_guilds, guildId) {

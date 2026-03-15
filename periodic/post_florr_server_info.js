@@ -1,5 +1,5 @@
 import { codeBlock, Client, EmbedBuilder } from "discord.js";
-import { getConfigJsonData } from "#app/config_json_handler.mjs";
+import { getConfigJsonRef } from "#app/config_json_handler.mjs";
 
 const ENDPOINTS = {
     garden: "florrio-map-0-green",
@@ -19,7 +19,7 @@ export class PostFlorrServerInfoHandler {
 
     /** @param { Client } client */
     async do(client) {
-        const configJsonData = getConfigJsonData();
+        const configJsonData = getConfigJsonRef();
         for (const dataOfGuild of configJsonData.data_of_guilds) {
             try {
                 const channelId = dataOfGuild.settings.force_server_id_channel;
