@@ -65,12 +65,12 @@ export class PostFlorrServerInfoHandler {
                     }
                 }
             }
-
-            console.log(`sent ${this.numberOfRequestsSent} requests to florr.io`);
         } catch (e) {
             console.error(e);
             console.error("failed to post florr server info");
         }
+
+        console.log(`sent ${this.numberOfRequestsSent} requests to florr.io`);
 
     }
 
@@ -155,6 +155,7 @@ export class PostFlorrServerInfoHandler {
 
     /** @param { TextChannel } channel */
     async post(channel, texts) {
+        channel.lastMessage
         const colors = { NA: "#cc0000", EU: "#0000cc", AS: "#00aa00" };
         const embeds = [];
         for (const region in texts) {
