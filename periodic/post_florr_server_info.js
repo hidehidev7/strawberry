@@ -39,41 +39,40 @@ export class PostFlorrServerInfoHandler {
             this.sortServers(servers);
 
             //check if it's different from last data
-            if (this.lastServers && JSON.stringify(servers) === JSON.stringify(this.lastServers)) {
-                return;
-            }
-            this.lastServers = servers;
-            const filteredServers = servers;
+            if (!this.lastServers || JSON.stringify(servers) !== JSON.stringify(this.lastServers)) {
+                this.lastServers = servers;
+                const filteredServers = servers;
 
-            //generate texts
-            const texts = {};
-            for (const region in filteredServers) {
-                texts[region] = {};
-                for (const key in servers[region]) {
-                    texts[region][key] = servers[region][key].map(id => {
-                        return codeBlock('js', `cp6.forceServerID("${id}")`);
-                    }).join("");
+                //generate texts
+                const texts = {};
+                for (const region in filteredServers) {
+                    texts[region] = {};
+                    for (const key in servers[region]) {
+                        texts[region][key] = servers[region][key].map(id => {
+                            return codeBlock('js', `cp6.forceServerID("${id}")`);
+                        }).join("");
+                    }
                 }
-            }
 
-            //post data
-            const configJsonData = getConfigJsonRef();
-            for (const dataOfGuild of configJsonData.data_of_guilds) {
-                const channelId = dataOfGuild.settings.force_server_id_channel;
-                if (channelId) {
-                    const channel = await client.channels.fetch(channelId);
-                    if (channel) {
-                        await this.post(channel, texts);
+                //post data
+                const configJsonData = getConfigJsonRef();
+                for (const dataOfGuild of configJsonData.data_of_guilds) {
+                    const channelId = dataOfGuild.settings.force_server_id_channel;
+                    if (channelId) {
+                        const channel = await client.channels.fetch(channelId);
+                        if (channel) {
+                            await this.post(channel, texts);
+                        }
                     }
                 }
             }
+
+            console.log(`sent ${this.numberOfRequestsSent} requests to florr.io`);
+
         } catch (e) {
             console.error(e);
             console.error("failed to post florr server info");
         }
-
-        console.log(`sent ${this.numberOfRequestsSent} requests to florr.io`);
-
     }
 
     /** @param {ServersIdList} cachedServers @param {ServersIdList} verifiedServers changes will be comitted this obj */
@@ -178,11 +177,11 @@ export class PostFlorrServerInfoHandler {
                     { name: 'Factory', inline: true, value: texts[region].factory },
                     { name: 'Pyramid', inline: true, value: texts[region].pyramid }
                 );
-                embeds.push(embed);
+            embeds.push(embed);
         }
 
         const messageOption = { content: BEGINNING_CONTENT, embeds };
-        if(channel.lastMessage && channel.lastMessage.content === BEGINNING_CONTENT) {
+        if (channel.lastMessage && channel.lastMessage.content === BEGINNING_CONTENT) {
             await channel.lastMessage.edit(messageOption);
         } else {
             await channel.send(messageOption);
