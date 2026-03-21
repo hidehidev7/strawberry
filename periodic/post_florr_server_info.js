@@ -1,4 +1,4 @@
-import { codeBlock, Client, EmbedBuilder } from "discord.js";
+import { codeBlock, Client, EmbedBuilder, TextChannel } from "discord.js";
 import { getConfigJsonRef } from "#app/config_json_handler.mjs";
 
 const ENDPOINTS = {
@@ -25,13 +25,16 @@ export class PostFlorrServerInfoHandler {
     async do(client) {
         this.numberOfRequestsSent = 0;
         try {
-            const servers = this.lastServers ? structuredClone(this.lastServers) : this.initServers();
-
-            //check if previously got servers exist
-            await this.removeServersNotExist(servers);
+            const servers = this.initServers();
 
             //get new servers
             await this.fetchServers(servers);
+
+            //check if previously got servers exist
+            await this.removeServersNotExist(this.lastServers, servers);
+
+            //sort for comparision
+            this.sortServers(servers);
 
             //check if it's different from last data
             if (this.lastServers && JSON.stringify(servers) === JSON.stringify(this.lastServers)) {
@@ -71,19 +74,20 @@ export class PostFlorrServerInfoHandler {
 
     }
 
-    /** @param {ServersIdList} servers */
-    async removeServersNotExist(servers) {
+    /** @param {ServersIdList} cachedServers @param {ServersIdList} verifiedServers changes will be comitted this obj */
+    async removeServersNotExist(cachedServers, verifiedServers) {
         const promises = [];
-        for (const region in servers) {
-            for (const key in servers[region]) {
-                const ids = servers[region][key];
-                ids.forEach(id => {
-                    const promise = fetch(`https://api.n.m28.io/server/${id}`)
+        for (const region in cachedServers) {
+            for (const key in cachedServers[region]) {
+                const cachedIds = cachedServers[region][key];
+                const verifiedIds = verifiedServers[region][key];
+                cachedIds.forEach(cachedId => {
+                    if (verifiedIds.includes(cachedId)) return;
+
+                    const promise = fetch(`https://api.n.m28.io/server/${cachedId}`)
                         .then(res => {
-                            if (res.ok) { }
-                            else {
-                                const index = ids.indexOf(id);
-                                if (index !== -1) ids.splice(index, 1);
+                            if (res.ok) {
+                                verifiedIds.push(cachedId);
                             }
                         });
                     promises.push(promise);
@@ -95,9 +99,9 @@ export class PostFlorrServerInfoHandler {
     }
 
     initServers(servers = {}) {
-        for(const region of ["NA", "EU", "AS"]) {
+        for (const region of ["NA", "EU", "AS"]) {
             servers[region] = {};
-            for(const key in ENDPOINTS) {
+            for (const key in ENDPOINTS) {
                 servers[region][key] = [];
             }
         }
@@ -123,11 +127,18 @@ export class PostFlorrServerInfoHandler {
         for (const region of regions) {
             const vlutrkey = { NA: "vultr-miami", EU: "vultr-frankfurt", AS: "vultr-tokyo" }[region];
             for (const key in datas) {
-                const ids = servers[region][key].slice();
+                const ids = servers[region][key];
                 const id = datas[key].servers[vlutrkey].id;
                 if (!ids.includes(id)) ids.push(id);
+            }
+        }
+    }
 
-                servers[region][key] = ids.sort((a, b) => { return a.localeCompare(b) });
+    /** @param {ServersIdList} servers */
+    sortServers(servers) {
+        for (const region in servers) {
+            for (const key in servers[region]) {
+                servers[region][key] = servers[region][key].sort((a, b) => { return a.localeCompare(b) });
             }
         }
     }
@@ -142,10 +153,10 @@ export class PostFlorrServerInfoHandler {
         return verified;
     }
 
-    /** @param { import("discord.js").Channel } channel */
+    /** @param { TextChannel } channel */
     async post(channel, texts) {
         const colors = { NA: "#cc0000", EU: "#0000cc", AS: "#00aa00" };
-        const messageOptions = [];
+        const embeds = [];
         for (const region in texts) {
             const embed = new EmbedBuilder()
                 .setColor(colors[region])
@@ -165,8 +176,8 @@ export class PostFlorrServerInfoHandler {
                     { name: 'Factory', inline: true, value: texts[region].factory },
                     { name: 'Pyramid', inline: true, value: texts[region].pyramid }
                 );
-            messageOptions.push({ embeds: [embed] });
+                embeds.push(embed);
         }
-        await Promise.all(messageOptions.map(option => channel.send(option)));
+        await channel.send({ embeds });
     }
 }
