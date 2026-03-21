@@ -1,5 +1,5 @@
 import { codeBlock, Client, EmbedBuilder, TextChannel } from "discord.js";
-import { getConfigJsonRef } from "#app/config_json_handler.mjs";
+import { getConfigJsonRef, getDataOfGuild } from "#app/config_json_handler.mjs";
 
 const ENDPOINTS = {
     garden: "florrio-map-0-green",
@@ -12,6 +12,8 @@ const ENDPOINTS = {
     factory: "florrio-map-7-green",
     pyramid: "florrio-map-8-green"
 };
+
+const BEGINNING_CONTENT = "<Strawberry Server Codes Message>";
 
 /** @typedef {Object.<string, Object.<string, string[]>>} ServersIdList */
 /** @typedef {Object.<string, Object.<string, string>>} ServersId  */
@@ -155,7 +157,6 @@ export class PostFlorrServerInfoHandler {
 
     /** @param { TextChannel } channel */
     async post(channel, texts) {
-        channel.lastMessage
         const colors = { NA: "#cc0000", EU: "#0000cc", AS: "#00aa00" };
         const embeds = [];
         for (const region in texts) {
@@ -179,6 +180,12 @@ export class PostFlorrServerInfoHandler {
                 );
                 embeds.push(embed);
         }
-        await channel.send({ embeds });
+
+        const messageOption = { content: BEGINNING_CONTENT, embeds };
+        if(channel.lastMessage && channel.lastMessage.content === BEGINNING_CONTENT) {
+            await channel.lastMessage.edit(messageOption);
+        } else {
+            await channel.send(messageOption);
+        }
     }
 }
