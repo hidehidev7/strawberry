@@ -19,12 +19,7 @@ export async function execute(interaction) {
                 (member) => member.user === interaction.user
             );
         })();
-        const isAllowedToUseTheCommand = await checkPermission(member).catch(
-            (e) => {
-                console.log(e);
-                return false;
-            }
-        );
+        const isAllowedToUseTheCommand = await checkPermission(member);
         if (!isAllowedToUseTheCommand) {
             await editReply(interaction, "no_permission");
             return;
