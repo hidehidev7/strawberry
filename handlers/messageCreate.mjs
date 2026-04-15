@@ -1,16 +1,12 @@
 import { setTimeout } from "node:timers/promises";
-import { SlashCommandBuilder } from "discord.js";
-import fs from "fs";
-import path from "path";
-
-import { getDataOfGuild } from "#app/config_json_handler.mjs";
+import { getGuildDataRef } from "#app/config_json_handler.mjs";
 
 export default async (message) => {
 
     async function deleteSuperReportMessage() {
 
         const guildId = message.guildId;
-        const guildData = getDataOfGuild(guildId);
+        const guildData = getGuildDataRef(guildId);
 
         if (!guildData) return;
         if (!guildData.is_bot_activated) return;

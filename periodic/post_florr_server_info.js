@@ -1,5 +1,5 @@
 import { codeBlock, Client, EmbedBuilder, TextChannel } from "discord.js";
-import { getConfigJsonRef, getDataOfGuild } from "#app/config_json_handler.mjs";
+import { getConfigJsonRef } from "#app/config_json_handler.mjs";
 
 const ENDPOINTS = {
     garden: "florrio-map-0-green",

@@ -1,9 +1,5 @@
 import { SlashCommandBuilder } from "discord.js";
-import fs from "fs";
-import path from "path";
-import util from "util";
-
-import { getDataOfGuild, setDataOfGuild } from "#app/config_json_handler.mjs";
+import { getGuildDataRef} from "#app/config_json_handler.mjs";
 import checkPermission from "#app/check_permission.mjs";
 import editReply from "#app/editReply.mjs";
 
@@ -15,8 +11,8 @@ export async function execute(interaction) {
     await interaction.deferReply();
 
     const guildId = interaction.guild.id;
-    const guildData = getDataOfGuild(guildId);
-    if (guildData) {
+    const guildDataRef = getGuildDataRef(guildId);
+    if (guildDataRef) {
         const member = (() => {
             const memberCollection = interaction.guild.members.cache;
             return memberCollection.find(
@@ -34,18 +30,12 @@ export async function execute(interaction) {
             return;
         }
 
-        if (guildData.is_bot_activated) {
+        if (guildDataRef.is_bot_activated) {
             await editReply(interaction, "already_set");
             return;
         }
-        const editedGuildData = Object.assign({}, guildData);
-        editedGuildData.is_bot_activated = true;
-        const setDataOfGuildCheck = setDataOfGuild(guildId, editedGuildData);
-        if (setDataOfGuildCheck) {
-            interaction.editReply("メッセージへの反応が有効化されました！");
-        } else {
-            await editReply(interaction, "error_occured");
-        }
+        guildDataRef.is_bot_activated = true;
+        await interaction.editReply("メッセージへの反応が有効化されました！");
     } else {
         await editReply(interaction, "unregistered_guild");
     }

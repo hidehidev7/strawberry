@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, hyperlink, MessageFlags, SlashCommandBuilder, userMention } from "discord.js";
 import editReply from "#app/editReply.mjs";
-import { getDataOfGuild } from "#app/config_json_handler.mjs";
+import { getGuildDataRef } from "#app/config_json_handler.mjs";
 
 export const data = new SlashCommandBuilder()
     .setName("squad")
@@ -35,13 +35,13 @@ export async function execute(interaction) {
     try {
         const replyMessage = (await interaction.deferReply({ withResponse: true })).resource.message;
 
-        const dataOfGuild = getDataOfGuild(interaction.guild.id);
-        if (!dataOfGuild) {
+        const guildDataRef = getGuildDataRef(interaction.guild.id);
+        if (!guildDataRef) {
             await editReply(interaction, "unregistered_guild");
             return;
         }
         {
-            const squadAllowedChannelStr = dataOfGuild.settings.squad_allowed_channel_s ?? "";
+            const squadAllowedChannelStr = guildDataRef.settings.squad_allowed_channel_s ?? "";
             const squadAllowedChannelList = squadAllowedChannelStr.split(" ");
             console.log(squadAllowedChannelList);
             if (!squadAllowedChannelList.includes(replyMessage.channel.name)) {
@@ -50,7 +50,7 @@ export async function execute(interaction) {
             }
         }
 
-        const logChannel = await interaction.guild.channels.fetch(dataOfGuild.settings.log_channel);
+        const logChannel = await interaction.guild.channels.fetch(guildDataRef.settings.log_channel);
 
         const codeString = interaction.options.getString('code');
 
@@ -87,7 +87,7 @@ export async function execute(interaction) {
                     content: `スクアドコード： ${codeString}`,
                     flags: MessageFlags.Ephemeral
                 });
-                if (dataOfGuild.settings.log_channel && logChannel) {
+                if (guildDataRef.settings.log_channel && logChannel) {
                     await logChannel.send(`Squad Button Click: ${userMention(i.user.id)} clicked button ${firstMessage.id} ${firstMessage.url}`);
                 }
             }
@@ -96,7 +96,7 @@ export async function execute(interaction) {
         await interaction.deleteReply();
 
         //log
-        if (dataOfGuild.settings.log_channel && logChannel) {
+        if (guildDataRef.log_channel && logChannel) {
             await logChannel.send(`Squad Button Create: ${userMention(interaction.user.id)} created button ${firstMessage.id} ${firstMessage.url}
 `);
         }

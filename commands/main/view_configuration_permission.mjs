@@ -1,9 +1,5 @@
 import { SlashCommandBuilder } from 'discord.js';
-import fs from 'fs';
-import path from 'path';
-import util from 'util';
-
-import { getDataOfGuild } from '#app/config_json_handler.mjs';
+import { getGuildDataRef } from '#app/config_json_handler.mjs';
 import editReply from "#app/editReply.mjs";
 
 export const data = new SlashCommandBuilder()
@@ -13,7 +9,7 @@ export const data = new SlashCommandBuilder()
 export async function execute(interaction) {
     await interaction.deferReply();
     const guildId = interaction.guild.id;
-    const guildData = getDataOfGuild(guildId);
+    const guildData = getGuildDataRef(guildId);
     if (guildData) {
         const c_p_roles = guildData.configuration_permission_roles;
         const replyText = c_p_roles.length === 0 ? "どうやら、設定権限を持つロールが設定されていませんね" : "Strawberryの設定権限を持つロールは" + c_p_roles.toString() + "です";

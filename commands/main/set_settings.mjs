@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from 'discord.js';
 
 import checkPermission from "#app/check_permission.mjs";
 import editReply from "#app/editReply.mjs";
-import { getDataOfGuild, assignDataOfGuild } from "#app/config_json_handler.mjs";
+import { getGuildDataRef } from "#app/config_json_handler.mjs";
 
 import { settings } from "#app/const.mjs";
 
@@ -34,8 +34,8 @@ export async function execute(interaction) {
         await interaction.deferReply();
 
         const guildId = interaction.guild.id;
-        const guildData = getDataOfGuild(guildId);
-        if (guildData) {
+        const guildDataRef = getGuildDataRef(guildId);
+        if (guildDataRef) {
             const member = (() => {
                 const memberCollection = interaction.guild.members.cache;
                 return memberCollection.find(
@@ -66,10 +66,7 @@ export async function execute(interaction) {
             if (settingType === "string") {
                 value = interaction.options.getString("value") ?? undefined;
             }
-            console.log(value);
-            const newAssignData = { settings: {  } };
-            newAssignData.settings[settingId] = value;
-            assignDataOfGuild(guildId, newAssignData);
+            guildDataRef.settings[settingId] = value;
             await interaction.editReply(`設定[${settingId}]が更新されました！`);
 
         } else {

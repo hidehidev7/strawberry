@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from 'discord.js';
 
 import editReply from "#app/editReply.mjs";
-import { getDataOfGuild } from "#app/config_json_handler.mjs";
+import { getGuildDataRef } from "#app/config_json_handler.mjs";
 
 import { settings } from "#app/const.mjs";
 
@@ -27,12 +27,12 @@ export async function execute(interaction) {
         await interaction.deferReply();
 
         const guildId = interaction.guild.id;
-        const guildData = getDataOfGuild(guildId);
-        if (guildData) {
+        const guildDataRef = getGuildDataRef(guildId);
+        if (guildDataRef) {
 
             const settingId = interaction.options.getSubcommand();
-            if (settingId === "all") await editReplyFullList(interaction, guildData);
-            else await editReplyIndividually(interaction, guildData);
+            if (settingId === "all") await editReplyFullList(interaction, guildDataRef);
+            else await editReplyIndividually(interaction, guildDataRef);
         } else {
             await editReply(interaction, "unregistered_guild");
         }

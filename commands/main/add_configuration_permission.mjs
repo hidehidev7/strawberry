@@ -1,10 +1,5 @@
 import { SlashCommandBuilder } from "discord.js";
-import fs from "fs";
-import path from "path";
-import util from "util";
-
-import { getDataOfGuild, setDataOfGuild } from "#app/config_json_handler.mjs";
-import checkPermission from "#app/check_permission.mjs";
+import { getGuildDataRef } from "#app/config_json_handler.mjs";
 import editReply from "#app/editReply.mjs";
 
 export const data = new SlashCommandBuilder()
@@ -21,17 +16,10 @@ export async function execute(interaction) {
     const roleName = interaction.options.getString("role");
 
     const guildId = interaction.guild.id;
-    const guildData = getDataOfGuild(guildId);
-    if (guildData) {
-
-        const editedGuildData = Object.assign({}, guildData);
-        editedGuildData.configuration_permission_roles.push(roleName);
-        const setDataOfGuildCheck = setDataOfGuild(guildId, editedGuildData);
-        if (setDataOfGuildCheck) {
-            await interaction.editReply(`ロール"${roleName}"をリストに追加しました！`);
-        } else {
-            await editReply(interaction, "error_occured");
-        }
+    const guildDataRef = getGuildDataRef(guildId);
+    if (guildDataRef) {
+        guildDataRef.configuration_permission_roles.push(roleName);
+        await interaction.editReply(`ロール"${roleName}"をリストに追加しました！`);
     } else {
         await editReply(interaction, "unregistered_guild");
     }
