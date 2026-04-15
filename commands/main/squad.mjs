@@ -43,7 +43,6 @@ export async function execute(interaction) {
         {
             const squadAllowedChannelStr = guildDataRef.settings.squad_allowed_channel_s ?? "";
             const squadAllowedChannelList = squadAllowedChannelStr.split(" ");
-            console.log(squadAllowedChannelList);
             if (!squadAllowedChannelList.includes(replyMessage.channel.name)) {
                 await editReply(interaction, "not_allowed_here");
                 return;
@@ -73,7 +72,6 @@ export async function execute(interaction) {
             components: [row],
             withResponse: true
         });
-        console.log(firstMessage);
 
         const collector = firstMessage.createMessageComponentCollector({ componentType: ComponentType.Button, time: 3_600_000 });
         collector.on("collect", async i => {
