@@ -31,6 +31,15 @@ export const getGuildIndex = function (data_of_guilds, guildId) {
     return data_of_guilds.map(e => { return e.guild_id; }).indexOf(guildId);
 }
 
+export const getGuildDataRef = function (guildId) {
+    const configJsonData = getConfigJsonRef();
+    const guildIndex = getGuildIndex(configJsonData.data_of_guilds, guildId);
+    if (guildIndex === -1) {
+        return;
+    }
+    return configJsonData.data_of_guilds[guildIndex];
+}
+
 //param guildId <String> ギルドのID
 //return guildData <object> | <undefined> ギルド情報を格納したオブジェクト。登録されていない場合、undefinedを返す。
 /** @return { GuildData | undefined } */
